@@ -1,0 +1,24 @@
+# Wakes Diederik every 10 minutes to check the battery.
+# Public repo so Actions minutes are free. The URL and secret live in repo secrets.
+name: battery-check
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+permissions:
+  actions: write
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Ask Diederik to check the battery
+        run: |
+          curl -fsS --max-time 60 -H "Authorization: Bearer ${{ secrets.CHECK_SECRET }}" "${{ secrets.CHECK_URL }}"
+      # GitHub switches off schedules in public repos after 60 days without activity.
+      # Re-enabling the workflow through the API resets that clock, no commits needed.
+      - name: Keep the schedule alive
+        run: |
+          gh api -X PUT "repos/${{ github.repository }}/actions/workflows/check.yml/enable"
+        env:
+          GH_TOKEN: ${{ github.token }}
