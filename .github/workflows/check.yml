@@ -1,5 +1,6 @@
 # Wakes Diederik every 10 minutes to check the battery.
 # Public repo so Actions minutes are free. The URL and secret live in repo secrets.
+# (Re-pushed after the switch to public so GitHub registers the schedule.)
 name: battery-check
 on:
   schedule:
